@@ -14,8 +14,8 @@ workflows:
           pip install -r requirements.txt
       - name: Build Android App Package
         script: |
-          # Combined into continuous strings to stop command syntax parsing splits
-          yes y | flet build apk --android-permissions android.permission.CAMERA=true --android-permissions android.permission.RECORD_AUDIO=true main.py
+          # Moving main.py right next to 'apk' solves the invalid argument error
+          yes y | flet build apk main.py --android-permissions android.permission.CAMERA=true --android-permissions android.permission.RECORD_AUDIO=true
     artifacts:
       - build/apk/*.apk
       - build/app/outputs/flutter-apk/*.apk
@@ -26,3 +26,4 @@ workflows:
         notify:
           success: true
           failure: true
+

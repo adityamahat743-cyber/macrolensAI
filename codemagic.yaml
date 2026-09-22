@@ -14,8 +14,8 @@ workflows:
           pip install -r requirements.txt
       - name: Build Android App Package
         script: |
-          # Pointing to '.' as the directory and using --target main.py stops the path crash
-          yes y | flet build apk . --target main.py --android-permissions android.permission.CAMERA=true --android-permissions android.permission.RECORD_AUDIO=true
+          # Passing the dot character tells Flet to build the current project folder natively
+          yes y | flet build apk . --android-permissions android.permission.CAMERA=true --android-permissions android.permission.RECORD_AUDIO=true
     artifacts:
       - build/apk/*.apk
       - build/app/outputs/flutter-apk/*.apk

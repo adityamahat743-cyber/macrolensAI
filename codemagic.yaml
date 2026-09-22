@@ -6,8 +6,6 @@ workflows:
     environment:
       vars:
         GEMINI_API_KEY: $GEMINI_API_KEY
-      groups:
-        - android_signing
     scripts:
       - name: Install dependencies
         script: |
@@ -16,7 +14,6 @@ workflows:
           pip install -r requirements.txt
       - name: Build Android App Package
         script: |
-          # We remove the broken --no-interactive flag entirely here
           flet build apk \
             --android-permissions android.permission.CAMERA=true \
             --android-permissions android.permission.RECORD_AUDIO=true \

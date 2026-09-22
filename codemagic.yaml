@@ -64,7 +64,8 @@ workflows:
             --info-plist NSCameraUsageDescription="MacroLens needs your camera to scan meals." \
             main.py
     artifacts:
-      - build/ipa/*.ipa
+      - build/ios/ipa/*.ipa
+   # Publishing blocks removed to clear the validation error
     publishing:
       app_store_connect:
         auth: integration

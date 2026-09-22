@@ -12,13 +12,13 @@ workflows:
           pip install --upgrade pip
           pip install --upgrade flet
           pip install -r requirements.txt
-      - name: Build Android App Package
+      - name: Build IOS App Package
         script: |
-          # Passing the dot character tells Flet to build the current project folder natively
-          yes y | flet build apk . --android-permissions android.permission.CAMERA=true --android-permissions android.permission.RECORD_AUDIO=true
-    artifacts:
-      - build/apk/*.apk
-      - build/app/outputs/flutter-apk/*.apk
+          # Compiles your Python folder into an iOS package without App Store publishing locks
+          yes y | flet build ipa . --info-plist NSCameraUsageDescription="MacroLens needs your camera to scan meals."
+     artifacts:
+      - build/ios/ipa/*.ipa
+      - build/app/outputs/flutter-ipa/*.ipa
     publishing:
       email:
         recipients:

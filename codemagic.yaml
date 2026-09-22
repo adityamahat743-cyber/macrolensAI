@@ -14,3 +14,17 @@ workflows:
           pip install -r requirements.txt
       - name: Build Android App Package
         script: |
+          yes y | flet build apk \
+            --android-permissions android.permission.CAMERA=true \
+            --android-permissions android.permission.RECORD_AUDIO=true \
+            main.py
+    artifacts:
+      - build/apk/*.apk
+      - build/app/outputs/flutter-apk/*.apk
+    publishing:
+      email:
+        recipients:
+          - adityamahat743@gmail.com
+        notify:
+          success: true
+          failure: true

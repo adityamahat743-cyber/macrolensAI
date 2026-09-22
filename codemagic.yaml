@@ -1,6 +1,6 @@
 workflows:
-  android-release:
-    name: MacroLens - Android
+  ios-release:
+    name: MacroLens - iOS
     max_build_duration: 60
     instance_type: mac_mini_m1
     environment:
@@ -9,16 +9,15 @@ workflows:
     scripts:
       - name: Install dependencies
         script: |
-          pip install --upgrade pip
-          pip install --upgrade flet
-          pip install -r requirements.txt
-      - name: Build IOS App Package
+          python3 -m pip install --upgrade pip
+          pip3 install --upgrade flet
+          pip3 install -r requirements.txt
+      - name: Build iOS Package
         script: |
           # Compiles your Python folder into an iOS package without App Store publishing locks
           yes y | flet build ipa . --info-plist NSCameraUsageDescription="MacroLens needs your camera to scan meals."
-     artifacts:
+    artifacts:
       - build/ios/ipa/*.ipa
-      - build/app/outputs/flutter-ipa/*.ipa
     publishing:
       email:
         recipients:
@@ -26,3 +25,4 @@ workflows:
         notify:
           success: true
           failure: true
+

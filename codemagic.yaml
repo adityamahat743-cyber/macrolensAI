@@ -5,32 +5,31 @@ workflows:
     instance_type: linux_x2
     environment:
       python: 3.12
+      flutter: stable  # <-- CRITICAL: Forces Codemagic to load Flutter framework tools
       vars:
-        # Set the real value as a secure/encrypted variable in the Codemagic UI,
-        # not here in plain text.
         GEMINI_API_KEY: $GEMINI_API_KEY
       groups:
-        - android_signing   # holds CM_KEYSTORE, CM_KEYSTORE_PASSWORD, CM_KEY_ALIAS, CM_KEY_PASSWORD
+        - android_signing
     scripts:
-      - name: Install Flutter deps for Flet
+      - name: Install dependencies
         script: |
+          pip install --upgrade pip
           pip install --upgrade flet
-      - name: Install project requirements
-        script: pip install -r requirements.txt
+          pip install -r requirements.txt
       - name: Build Android App Bundle
         script: |
+          # Build a release package
           flet build appbundle \
             --android-permissions android.permission.CAMERA=true \
             --android-permissions android.permission.RECORD_AUDIO=true \
-            --build-number=$(($PROJECT_BUILD_NUMBER)) \
             main.py
     artifacts:
-      - build/appbundle/**/*.aab
-      - build/apk/**/*.apk
+      - build/app/outputs/bundle/release/*.aab
+      - build/app/outputs/flutter-apk/*.apk
     publishing:
       email:
         recipients:
-          - your-email@example.com
+          - adityamahat743@gmail.com   # <-- Update to your real email address
         notify:
           success: true
           failure: true
@@ -41,24 +40,27 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       python: 3.12
+      flutter: stable  # <-- CRITICAL: Setup Flutter on macOS environment
       vars:
         GEMINI_API_KEY: $GEMINI_API_KEY
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.yourcompany.macrolens
       groups:
-        - appstore_credentials   # holds App Store Connect API key
+        - appstore_credentials
     scripts:
-      - name: Install project requirements
-        script: pip install -r requirements.txt
+      - name: Install dependencies
+        script: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
       - name: Build iOS package
         script: |
           flet build ipa \
             --info-plist NSCameraUsageDescription="MacroLens needs your camera to scan meals." \
             main.py
     artifacts:
-      - build/ipa/**/*.ipa
+      - build/ios/ipa/*.ipa
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true
+        submit_to_testflight: true  # <-- Cleaned up user comment string bug

@@ -4,7 +4,6 @@ workflows:
     max_build_duration: 60
     instance_type: mac_mini_m1
     environment:
-      flutter: stable
       vars:
         GEMINI_API_KEY: $GEMINI_API_KEY
       groups:
@@ -15,15 +14,11 @@ workflows:
           pip install --upgrade pip
           pip install --upgrade flet
           pip install -r requirements.txt
-      - name: Pre-build project cleanup
-        script: |
-          # Explicitly force flutter config initialization inside the builder container
-          flutter config --no-analytics
-          flutter doctor
       - name: Build Android App Package
         script: |
-          # Switch target execution to build an inline standalone APK layout format directly
+          # The --no-interactive flag forces Flet to automatically say YES to downloading Flutter
           flet build apk \
+            --no-interactive \
             --android-permissions android.permission.CAMERA=true \
             --android-permissions android.permission.RECORD_AUDIO=true \
             main.py

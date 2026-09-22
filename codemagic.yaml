@@ -16,9 +16,8 @@ workflows:
           pip install -r requirements.txt
       - name: Build Android App Package
         script: |
-          # The --no-interactive flag forces Flet to automatically say YES to downloading Flutter
+          # We remove the broken --no-interactive flag entirely here
           flet build apk \
-            --no-interactive \
             --android-permissions android.permission.CAMERA=true \
             --android-permissions android.permission.RECORD_AUDIO=true \
             main.py

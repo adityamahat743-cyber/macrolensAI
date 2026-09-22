@@ -15,14 +15,20 @@ workflows:
           pip install --upgrade pip
           pip install --upgrade flet
           pip install -r requirements.txt
-      - name: Build Android App Bundle
+      - name: Pre-build project cleanup
         script: |
-          flet build appbundle \
+          # Explicitly force flutter config initialization inside the builder container
+          flutter config --no-analytics
+          flutter doctor
+      - name: Build Android App Package
+        script: |
+          # Switch target execution to build an inline standalone APK layout format directly
+          flet build apk \
             --android-permissions android.permission.CAMERA=true \
             --android-permissions android.permission.RECORD_AUDIO=true \
             main.py
     artifacts:
-      - build/app/outputs/bundle/release/*.aab
+      - build/apk/*.apk
       - build/app/outputs/flutter-apk/*.apk
     publishing:
       email:

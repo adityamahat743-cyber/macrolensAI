@@ -4,8 +4,7 @@ workflows:
     max_build_duration: 60
     instance_type: linux_x2
     environment:
-    
-      flutter: stable  # Forces Codemagic to preinstall the Flutter framework tools
+      flutter: stable
       vars:
         GEMINI_API_KEY: $GEMINI_API_KEY
       groups:
@@ -16,21 +15,15 @@ workflows:
           pip install --upgrade pip
           pip install --upgrade flet
           pip install -r requirements.txt
-      - name: Build Android App Bundle (.aab, for Play Store)
+      - name: Build Android App Bundle
         script: |
-          flet build aab \
-            --android-permissions android.permission.CAMERA=true \
-            --android-permissions android.permission.RECORD_AUDIO=true \
-            main.py
-      - name: Build Android APK (.apk, for direct install/testing)
-        script: |
-          flet build apk \
+          flet build appbundle \
             --android-permissions android.permission.CAMERA=true \
             --android-permissions android.permission.RECORD_AUDIO=true \
             main.py
     artifacts:
-      - build/aab/*.aab
-      - build/apk/*.apk
+      - build/app/outputs/bundle/release/*.aab
+      - build/app/outputs/flutter-apk/*.apk
     publishing:
       email:
         recipients:
@@ -38,35 +31,3 @@ workflows:
         notify:
           success: true
           failure: true
-
-  ios-release:
-    name: MacroLens - iOS
-    max_build_duration: 60
-    instance_type: mac_mini_m2
-    environment:
-    
-      flutter: stable  # Sets up Flutter on the macOS build environment
-      vars:
-        GEMINI_API_KEY: $GEMINI_API_KEY
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.yourcompany.macrolens
-      groups:
-        - appstore_credentials
-    scripts:
-      - name: Install dependencies
-        script: |
-          pip install --upgrade pip
-          pip install -r requirements.txt
-      - name: Build iOS package
-        script: |
-          flet build ipa \
-            --info-plist NSCameraUsageDescription="MacroLens needs your camera to scan meals." \
-            main.py
-    artifacts:
-      - build/ios/ipa/*.ipa
-   # Publishing blocks removed to clear the validation error
-    publishing:
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: true

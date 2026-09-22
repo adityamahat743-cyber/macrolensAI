@@ -5,7 +5,7 @@ workflows:
     instance_type: linux_x2
     environment:
       python: 3.12
-      flutter: stable  # <-- CRITICAL: Forces Codemagic to load Flutter framework tools
+      flutter: stable  # Forces Codemagic to preinstall the Flutter framework tools
       vars:
         GEMINI_API_KEY: $GEMINI_API_KEY
       groups:
@@ -16,20 +16,25 @@ workflows:
           pip install --upgrade pip
           pip install --upgrade flet
           pip install -r requirements.txt
-      - name: Build Android App Bundle
+      - name: Build Android App Bundle (.aab, for Play Store)
         script: |
-          # Build a release package
-          flet build appbundle \
+          flet build aab \
+            --android-permissions android.permission.CAMERA=true \
+            --android-permissions android.permission.RECORD_AUDIO=true \
+            main.py
+      - name: Build Android APK (.apk, for direct install/testing)
+        script: |
+          flet build apk \
             --android-permissions android.permission.CAMERA=true \
             --android-permissions android.permission.RECORD_AUDIO=true \
             main.py
     artifacts:
-      - build/app/outputs/bundle/release/*.aab
-      - build/app/outputs/flutter-apk/*.apk
+      - build/aab/*.aab
+      - build/apk/*.apk
     publishing:
       email:
         recipients:
-          - adityamahat743@gmail.com   # <-- Update to your real email address
+          - adityamahat743@gmail.com
         notify:
           success: true
           failure: true
@@ -40,7 +45,7 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       python: 3.12
-      flutter: stable  # <-- CRITICAL: Setup Flutter on macOS environment
+      flutter: stable  # Sets up Flutter on the macOS build environment
       vars:
         GEMINI_API_KEY: $GEMINI_API_KEY
       ios_signing:
@@ -59,8 +64,8 @@ workflows:
             --info-plist NSCameraUsageDescription="MacroLens needs your camera to scan meals." \
             main.py
     artifacts:
-      - build/ios/ipa/*.ipa
+      - build/ipa/*.ipa
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true  # <-- Cleaned up user comment string bug
+        submit_to_testflight: true
